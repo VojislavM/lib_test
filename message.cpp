@@ -17,12 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "message.hpp"
-#include "crc32.h"
+#include "crc32.hpp"
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "inet.h"
+#include "inet.hpp"
 //#include <arpa/inet.h>
 
 // Forward declarations.
@@ -174,7 +174,7 @@ message_result_t message_tlv_get_command(const message_t *message, tlv_command_t
     return result;
   }
 
-  *command = _command;
+  *command = (tlv_command_t) _command;
 
   return MESSAGE_SUCCESS;
 }
@@ -187,7 +187,7 @@ message_result_t message_tlv_get_reply(const message_t *message, tlv_reply_t *re
     return result;
   }
 
-  *reply = _reply;
+  *reply = (tlv_reply_t)_reply;
 
   return MESSAGE_SUCCESS;
 }
@@ -253,7 +253,7 @@ ssize_t message_serialize(uint8_t *buffer, size_t length, const message_t *messa
 
 void message_print(const message_t *message)
 {
-  Serial.println();
+  Serial.print("Voja");
   printf("<Message tlvs(%u)=[", (unsigned int) message->length);
   for (size_t i = 0; i < message->length; i++) {
     uint8_t *data = message->tlv[i].value;

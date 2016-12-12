@@ -20,7 +20,7 @@
 #define KORUZA_MESSAGE_H
 #include <Arduino.h> 
 #include <stdint.h>
-#include "types.h"
+#include "types.hpp"
 //#include <sys/types.h>
 
 #ifdef __cplusplus

@@ -4,7 +4,7 @@
 #define KORUZA_CRC32_H
 
 #include <stdint.h>
-#include "types.h"
+#include "types.hpp"
 
 #ifdef __cplusplus
 extern "C" {

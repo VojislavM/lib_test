@@ -34,7 +34,7 @@ void loop() {
   ssize_t test_frame_size;
   
   Serial.println("Generated protocol message: ");
-  //message_print(&msg);
+  message_print(&msg);
   //Serial.println();
   Serial.print("<Message tlvs(%u)=[");
   Serial.print((unsigned int) msg.length);

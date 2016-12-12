@@ -102,6 +102,8 @@ message_result_t message_parse(message_t *message, const uint8_t *data, size_t l
 
 message_result_t message_tlv_add(message_t *message, uint8_t type, uint16_t length, const uint8_t *value)
 {
+  Serial.print("message.length enter add function ");
+  Serial.println(message->length);
   if (message->length >= MAX_TLV_COUNT) {
     return MESSAGE_ERROR_TOO_MANY_TLVS;
   }
@@ -116,6 +118,8 @@ message_result_t message_tlv_add(message_t *message, uint8_t type, uint16_t leng
   message->tlv[i].length = length;
   memcpy(message->tlv[i].value, value, length);
   message->length++;
+  Serial.print("message.length exit add function ");
+  Serial.println(message->length);
 
   return MESSAGE_SUCCESS;
 }
@@ -150,6 +154,8 @@ message_result_t message_tlv_add_current_reading(message_t *message, uint16_t cu
 message_result_t message_tlv_add_checksum(message_t *message)
 {
   uint32_t checksum = message_checksum(message);
+  Serial.print("checksum ");
+  Serial.println(checksum);
   return message_tlv_add(message, TLV_CHECKSUM, sizeof(uint32_t), (uint8_t*) &checksum);
 }
 
@@ -253,17 +259,23 @@ ssize_t message_serialize(uint8_t *buffer, size_t length, const message_t *messa
 
 void message_print(const message_t *message)
 {
-  Serial.print("Voja");
-  printf("<Message tlvs(%u)=[", (unsigned int) message->length);
+
+  Serial.print("<Message tlvs(");
+  Serial.print((unsigned int) message->length);
+  Serial.print(")=[");
   for (size_t i = 0; i < message->length; i++) {
     uint8_t *data = message->tlv[i].value;
     size_t data_length = message->tlv[i].length;
 
-    printf("{%u, \"", message->tlv[i].type);
+    Serial.print("{");
+    Serial.print(message->tlv[i].type);
+    Serial.print(", \"");
     for (size_t j = 0; j < data_length; j++) {
-      printf("%02X%s", data[j], (j < data_length - 1) ? " " : "");
+      //Serial.print("%02X%s", data[j], (j < data_length - 1) ? " " : "");
+      Serial.print(data[j]);
     }
-    printf("\"}%s", (i < message->length - 1) ? "," : "");
+    //printf("\"}%s", (i < message->length - 1) ? "," : "");
+    //Serial.print();
   }
   printf("]>");
 }
@@ -273,6 +285,8 @@ uint32_t message_checksum(const message_t *message)
   uint32_t checksum = 0;
   for (size_t i = 0; i < message->length; i++) {
     checksum = crc32(checksum, message->tlv[i].value, message->tlv[i].length);
+    Serial.print("Voja");
+    Serial.println(checksum);
   }
   return htonl(checksum);
 }

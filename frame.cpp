@@ -77,7 +77,7 @@ ssize_t frame_message(uint8_t *frame, size_t length, const message_t *message){
 	}
 
 	// Serialize message into buffer.
-	uint8_t *buffer;// = (uint8_t*) malloc(buffer_size);
+	uint8_t *buffer = (uint8_t*) malloc(buffer_size);
 	if (!buffer) {
 		abort();
 	}

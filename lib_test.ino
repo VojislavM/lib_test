@@ -1,7 +1,7 @@
 
 #include "message.hpp"
 #include "frame.hpp"
-#include "crc32.hpp"
+//#include "crc32.hpp"
 #include "inet.hpp"
 
 void setup() {
@@ -19,13 +19,13 @@ void loop() {
   message_init(&msg);
   //Serial.print("msg sizeof: ");
   //Serial.println(sizeof(msg));
-  message_tlv_add_command(&msg, COMMAND_GET_STATUS);
+  //message_tlv_add_command(&msg, COMMAND_GET_STATUS);
   //Serial.print("msg sizeof: ");
   //Serial.println(sizeof(msg));
-  //message_tlv_add_command(&msg, COMMAND_MOVE_MOTOR);
+  message_tlv_add_command(&msg, COMMAND_MOVE_MOTOR);
   //message_tlv_add_reply(&msg, REPLY_ERROR_REPORT);
-  //tlv_motor_position_t position = {0, 0, 0};
-  //message_tlv_add_motor_position(&msg, &position);
+  tlv_motor_position_t position = {1000, 0, 0};
+  message_tlv_add_motor_position(&msg, &position);
 
   uint8_t buffer[1024];
   size_t length = message_serialize(buffer, 1024, &msg);

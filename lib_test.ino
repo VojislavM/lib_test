@@ -83,20 +83,6 @@ void loop() {
 
   message_free(&msg);
 
-
-  uint8_t byteBuffer[] = "Hello World";
-  uint8_t *value = byteBuffer;
-
-  uint32_t checksum = 0;
-  checksum = crc32(checksum, value, (size_t)sizeof(byteBuffer));
-    //Serial.println(checksum);
-
-  Serial.println(checksum, HEX);
-
-  checksum = htonl(checksum);
-
-  Serial.println(checksum, HEX);
-
   Serial.println("end");
   while(1);
 }

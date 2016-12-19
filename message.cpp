@@ -18,10 +18,11 @@
  */
 #include "message.hpp"
 #include "crc32.hpp"
-
+#include "CRC32.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "Ethernet.h"
 #include "inet.hpp"
 //#include <arpa/inet.h>
 
@@ -284,12 +285,18 @@ void message_print(const message_t *message)
 
 uint32_t message_checksum(const message_t *message)
 {
+  
   uint32_t checksum = 0;
+  // Create a CRC32 checksum calculator.
+  CRC32 crc;
   for (size_t i = 0; i < message->length; i++) {
-    checksum = crc32(checksum, message->tlv[i].value, message->tlv[i].length);
+    crc.update(message->tlv[i].value, message->tlv[i].length);
+    //checksum = crc32(checksum, message->tlv[i].value, message->tlv[i].length);
     //Serial.print("Voja");
     //Serial.println(checksum);
   }
+  checksum = crc.finalize();
+  //return checksum;
   return htonl(checksum);
 }
 

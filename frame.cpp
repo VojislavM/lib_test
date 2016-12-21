@@ -1,6 +1,8 @@
 #include "frame.hpp"
 #include "message.hpp"
 
+#include <Arduino.h> 
+#include <stdint.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -8,10 +10,32 @@
 
 
 void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
+  uint8_t message[100];
+  int msg_count = 0;
 	parser_state_t state = SERIAL_STATE_WAIT_START;
-	uint8_t message[100];
-	int msg_count = 0;
-	for (size_t i = 0; i < length; i++){
+  Serial.println("parse begin");
+
+  for (int i = 0; i < length; i++) {
+    Serial.print(buffer[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
+
+  Serial.print("message_len: ");
+  Serial.println(length);
+  
+
+	for (int i = 0; i < length; i++){
+    Serial.println();
+    Serial.print("message");
+    Serial.print("[");
+    Serial.print(msg_count);
+    Serial.print("]");
+    Serial.println(message[msg_count], HEX);
+    //Serial.print("state: ");
+    //Serial.println(state);
+//    //Serial.print("buffer: ");
+//    Serial.println();//buffer[i], HEX);
 		switch (state) {
 			case SERIAL_STATE_WAIT_START: {
 				// Waiting for frame start marker.
@@ -36,28 +60,34 @@ void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
 				} else if (buffer[i] == FRAME_MARKER_END) {
 					// End of frame.
 					message_result_t result = message_parse(msg, message, msg_count);
+          //Serial.print("result: ");
+          Serial.println(result);
 					if (result == MESSAGE_SUCCESS) {
 #ifdef DEBUG_MODE
-						printf("Message parsed");
+						//printf("Message parsed");
 						//message_print(msg);
-						printf("\n");
+						//printf("\n");
 #endif
 					} else {
 #ifdef DEBUG_MODE
-						printf("Failed to parse serialized message: %d\n", result);
+						//printf("Failed to parse serialized message: %d\n", result);
 #endif
 					}
 					length = 0;
 					state = SERIAL_STATE_WAIT_START;
 				} else {
 					// Frame content.
-					message[msg_count++] = buffer[i];
+         //Serial.print("buffer: ");
+         //Serial.println(buffer[i]);
+          msg_count++;
+					message[msg_count] = buffer[i];
 					//frame_parser_add_to_frame(parser, byte);
 				}
 				break;
 			}
 			case SERIAL_STATE_AFTER_ESCAPE: {
-				message[msg_count++] = buffer[i];
+        msg_count++;
+				message[msg_count] = buffer[i];
 				state = SERIAL_STATE_IN_FRAME;
 				break;
 			}

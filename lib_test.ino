@@ -25,6 +25,10 @@ void setup() {
 void loop() {
   uint8_t test_frame[1024];
   ssize_t test_frame_size;
+
+  /* Parsed message */
+  message_t msg_parsed;
+  
   // put your main code here, to run repeatedly:
   /* Generate message - test message */
   message_t msg;
@@ -75,6 +79,17 @@ void loop() {
         Serial.print(" ");
       }
       Serial.println();
+
+      Serial.print("message_len: ");
+      Serial.println(message_len);
+      
+        //message_init(&msg_parsed);
+//      //parse received message
+        frame_parser((uint8_t *)&rx_buffer, message_len, &msg_parsed);
+        Serial.println("Parsed protocol message: ");
+        message_print(&msg_parsed);
+//      Serial.println();
+        message_free(&msg_parsed); 
       // clear the string:
       //inputString = "";
       stringComplete = false;

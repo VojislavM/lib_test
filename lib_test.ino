@@ -4,15 +4,22 @@
 //#include "crc32.hpp"
 #include "inet.hpp"
 
-String inputString = "";         // a string to hold incoming data
+//String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
+
+volatile uint8_t rx_buffer[100];
+uint8_t rx_data[2];
+int rx_indx;
+volatile int transfer_cplt;
+uint8_t rx_last[2] = {0x00, 0x00};
+int message_len = 0;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("begin");
 
   // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  //inputString.reserve(200);
 }
 
 void loop() {
@@ -44,7 +51,7 @@ void loop() {
 //  Serial.println("Generated protocol message: ");
 //  message_print(&msg);
   
-  Serial.println();
+  //Serial.println();
   
   test_frame_size = frame_message(test_frame, sizeof(test_frame), &msg);
 //  Serial.print("Serialized protocol message with frame:");
@@ -57,13 +64,19 @@ void loop() {
 
   message_free(&msg);
 
-  Serial.println("end");
-  delay(1000);
+  //Serial.println("end");
+  //delay(1000);
   //while(1){
     if (stringComplete) {
-      Serial.println(inputString);
+      //Serial.println(inputString);
+      Serial.println("Received serialized protocol message:");
+      for (size_t i = 0; i < message_len; i++) {
+        Serial.print(rx_buffer[i], HEX);
+        Serial.print(" ");
+      }
+      Serial.println();
       // clear the string:
-      inputString = "";
+      //inputString = "";
       stringComplete = false;
     }
   //}
@@ -78,15 +91,53 @@ void loop() {
  */
 void serialEvent() {
   while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // add it to the inputString:
-    inputString += inChar;
-    // if the incoming character is a newline, set a flag
-    // so the main loop can do something about it:
-    if (inChar == '\n') {
-      stringComplete = true;
+    rx_data[0] = (uint8_t)Serial.read();
+    /* Clear Rx_Buffer before receiving new data */
+    if (rx_indx==0){
+      for (int i=0; i<100; i++) rx_buffer[i]=0;
     }
+
+    /* Start byte received */
+    if(rx_data[0] == FRAME_MARKER_START){
+      /* Start byte received in the frame */
+//      Serial.println("rx_last, rx_buff[0]:");
+//      Serial.println(rx_last[0], HEX);
+//      Serial.println(rx_buffer[0], HEX);
+      if((rx_last[0] == FRAME_MARKER_ESCAPE) && (rx_buffer[0] == FRAME_MARKER_START)){
+        rx_buffer[rx_indx++]=rx_data[0];
+      }
+      /* Real start byte received */
+      else if(rx_last[0] != FRAME_MARKER_ESCAPE){
+        rx_indx = 0;
+        rx_buffer[rx_indx++]=rx_data[0];
+
+      }
+    }
+    /* End byte received */
+    else if(rx_data[0] == FRAME_MARKER_END){
+      /* End byte received in the frame */
+      if(rx_last[0] == FRAME_MARKER_ESCAPE && rx_buffer[0] == FRAME_MARKER_START){
+        rx_buffer[rx_indx++]=rx_data[0];
+      }
+      /* Real end byte received */
+      else if(rx_last[0] != FRAME_MARKER_ESCAPE && rx_buffer[0] == FRAME_MARKER_START){
+        rx_buffer[rx_indx++]=rx_data[0];
+        message_len = rx_indx;
+        rx_indx=0;
+        /* Transfer complete, data is ready to read */
+        stringComplete = true; //Transfer_cplt=1;
+        /* Disable USART1 interrupt */
+        //HAL_NVIC_DisableIRQ(USART1_IRQn);
+      }
+    }
+    else{
+      if(rx_buffer[0] == FRAME_MARKER_START){
+        rx_buffer[rx_indx++]=rx_data[0];
+      }
+    }
+    /* Store last received byte for ESC check */
+    rx_last[0] = rx_data[0];
+    
   }
 }
 /*

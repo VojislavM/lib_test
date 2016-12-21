@@ -4,9 +4,15 @@
 //#include "crc32.hpp"
 #include "inet.hpp"
 
+String inputString = "";         // a string to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
 void setup() {
   Serial.begin(115200);
   Serial.println("begin");
+
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
 }
 
 void loop() {
@@ -35,25 +41,53 @@ void loop() {
   //Serial.print("msg sizeof: ");
   //Serial.println(sizeof(msg));
   
-  Serial.println("Generated protocol message: ");
-  message_print(&msg);
+//  Serial.println("Generated protocol message: ");
+//  message_print(&msg);
   
   Serial.println();
   
   test_frame_size = frame_message(test_frame, sizeof(test_frame), &msg);
-  Serial.print("Serialized protocol message with frame:");
-  Serial.println();
-  for (size_t i = 0; i < test_frame_size; i++) {
-    Serial.print(test_frame[i], HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
+//  Serial.print("Serialized protocol message with frame:");
+//  Serial.println();
+//  for (size_t i = 0; i < test_frame_size; i++) {
+//    Serial.print(test_frame[i], HEX);
+//    Serial.print(" ");
+//  }
+//  Serial.println();
 
   message_free(&msg);
 
   Serial.println("end");
-  //delay(1000);
-  while(1);
+  delay(1000);
+  //while(1){
+    if (stringComplete) {
+      Serial.println(inputString);
+      // clear the string:
+      inputString = "";
+      stringComplete = false;
+    }
+  //}
+}
+
+
+/*
+  SerialEvent occurs whenever a new data comes in the
+ hardware serial RX.  This routine is run between each
+ time loop() runs, so using delay inside loop can delay
+ response.  Multiple bytes of data may be available.
+ */
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
 }
 /*
 GET_STATUS:

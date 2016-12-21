@@ -70,8 +70,8 @@ ssize_t frame_message(uint8_t *frame, size_t length, const message_t *message){
 	// First check if there is not enough space in the output buffer. This is
 	// an optimistic estimate (assumes no escaping is needed).
 	size_t buffer_size = message_serialized_size(message);
-  Serial.print("frame message, buffer size: ");
-  Serial.println(buffer_size);
+//  Serial.print("frame message, buffer size: ");
+//  Serial.println(buffer_size);
 	if (length < buffer_size + 2) {
 		return -1;
 	}

@@ -85,7 +85,9 @@ void loop() {
       
         //message_init(&msg_parsed);
 //      //parse received message
-        frame_parser((uint8_t *)&rx_buffer, message_len, &msg_parsed);
+        int num = frame_parser((uint8_t *)&rx_buffer, message_len, &msg_parsed);
+        //Serial.print("number: ");
+        Serial.println(num);
         Serial.println("Parsed protocol message: ");
         message_print(&msg_parsed);
 //      Serial.println();

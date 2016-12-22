@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "message.hpp"
+#include <Arduino.h> 
 //#include "crc32.hpp"
 /*Lib for CRC32 https://github.com/bakercp/CRC32 */
 #include "CRC32.h"

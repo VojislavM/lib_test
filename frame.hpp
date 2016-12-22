@@ -29,7 +29,7 @@ typedef enum {
  * @param frame buffer
  * @param message data
  */
-void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg);
+int frame_parser(uint8_t *buffer, uint8_t length, message_t *msg);
 
 /**
  * Frames the given message.

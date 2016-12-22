@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 
-void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
+int frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
   uint8_t message[100];
   int msg_count = 0;
 	parser_state_t state = SERIAL_STATE_WAIT_START;
@@ -62,16 +62,17 @@ void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
 					message_result_t result = message_parse(msg, message, msg_count);
           //Serial.print("result: ");
           Serial.println(result);
+          return (int)msg_count;
 					if (result == MESSAGE_SUCCESS) {
+            return (int)msg_count;
 #ifdef DEBUG_MODE
 						//printf("Message parsed");
 						//message_print(msg);
 						//printf("\n");
 #endif
 					} else {
-#ifdef DEBUG_MODE
-						//printf("Failed to parse serialized message: %d\n", result);
-#endif
+            //Serial.println("return");
+            return (int)msg_count;
 					}
 					length = 0;
 					state = SERIAL_STATE_WAIT_START;
@@ -79,16 +80,16 @@ void frame_parser(uint8_t *buffer, uint8_t length, message_t *msg){
 					// Frame content.
          //Serial.print("buffer: ");
          //Serial.println(buffer[i]);
-          msg_count++;
 					message[msg_count] = buffer[i];
+          msg_count++;
 					//frame_parser_add_to_frame(parser, byte);
 				}
 				break;
 			}
-			case SERIAL_STATE_AFTER_ESCAPE: {
-        msg_count++;
+			case SERIAL_STATE_AFTER_ESCAPE: {   
 				message[msg_count] = buffer[i];
-				state = SERIAL_STATE_IN_FRAME;
+        msg_count++;
+		 		state = SERIAL_STATE_IN_FRAME;
 				break;
 			}
 		}//end switch

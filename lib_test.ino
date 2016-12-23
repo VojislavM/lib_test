@@ -4,6 +4,8 @@
 //#include "crc32.hpp"
 #include "inet.hpp"
 
+//#include <SoftwareSerial.h>
+
 //String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
@@ -14,12 +16,17 @@ volatile int transfer_cplt;
 uint8_t rx_last[2] = {0x00, 0x00};
 int message_len = 0;
 
+//SoftwareSerial mySerial(3, 2); // RX, TX
+
 void setup() {
   Serial.begin(115200);
   Serial.println("begin");
 
   // reserve 200 bytes for the inputString:
   //inputString.reserve(200);
+   // set the data rate for the SoftwareSerial port
+//  mySerial.begin(9600);
+//  mySerial.println("Hello, world?");
 }
 
 void loop() {
@@ -29,44 +36,44 @@ void loop() {
   /* Parsed message */
   message_t msg_parsed;
   
-  // put your main code here, to run repeatedly:
-  /* Generate message - test message */
-  message_t msg;
-  message_init(&msg);
-  //Serial.print("msg sizeof: ");
-  //Serial.println(sizeof(msg));
-  //message_tlv_add_command(&msg, COMMAND_GET_STATUS);
-  //Serial.print("msg sizeof: ");
-  //Serial.println(sizeof(msg));
-  message_tlv_add_command(&msg, COMMAND_MOVE_MOTOR);
-  //message_tlv_add_reply(&msg, REPLY_ERROR_REPORT);
-  tlv_motor_position_t position = {1000, 0, 0};
-  message_tlv_add_motor_position(&msg, &position);
-  //message_tlv_add_power_reading(&msg, 0x0444);
-  //tlv_error_report_t error_report;
-  //error_report.code = 35;
-  //message_tlv_add_error_report(&msg, &error_report);
-  //Serial.print("msg.length ");
-  //Serial.println(msg.length);
-  message_tlv_add_checksum(&msg);
-  //Serial.print("msg sizeof: ");
-  //Serial.println(sizeof(msg));
-  
-//  Serial.println("Generated protocol message: ");
-//  message_print(&msg);
-  
-  //Serial.println();
-  
-  test_frame_size = frame_message(test_frame, sizeof(test_frame), &msg);
-//  Serial.print("Serialized protocol message with frame:");
-//  Serial.println();
-//  for (size_t i = 0; i < test_frame_size; i++) {
-//    Serial.print(test_frame[i], HEX);
-//    Serial.print(" ");
-//  }
-//  Serial.println();
-
-  message_free(&msg);
+//  // put your main code here, to run repeatedly:
+//  /* Generate message - test message */
+//  message_t msg;
+//  message_init(&msg);
+//  //Serial.print("msg sizeof: ");
+//  //Serial.println(sizeof(msg));
+//  //message_tlv_add_command(&msg, COMMAND_GET_STATUS);
+//  //Serial.print("msg sizeof: ");
+//  //Serial.println(sizeof(msg));
+//  message_tlv_add_command(&msg, COMMAND_MOVE_MOTOR);
+//  //message_tlv_add_reply(&msg, REPLY_ERROR_REPORT);
+//  tlv_motor_position_t position = {1000, 0, 0};
+//  message_tlv_add_motor_position(&msg, &position);
+//  //message_tlv_add_power_reading(&msg, 0x0444);
+//  //tlv_error_report_t error_report;
+//  //error_report.code = 35;
+//  //message_tlv_add_error_report(&msg, &error_report);
+//  //Serial.print("msg.length ");
+//  //Serial.println(msg.length);
+//  message_tlv_add_checksum(&msg);
+//  //Serial.print("msg sizeof: ");
+//  //Serial.println(sizeof(msg));
+//  
+////  Serial.println("Generated protocol message: ");
+////  message_print(&msg);
+//  
+//  //Serial.println();
+//  
+//  test_frame_size = frame_message(test_frame, sizeof(test_frame), &msg);
+////  Serial.print("Serialized protocol message with frame:");
+////  Serial.println();
+////  for (size_t i = 0; i < test_frame_size; i++) {
+////    Serial.print(test_frame[i], HEX);
+////    Serial.print(" ");
+////  }
+////  Serial.println();
+//
+//  message_free(&msg);
 
   //Serial.println("end");
   //delay(1000);

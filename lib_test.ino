@@ -16,6 +16,15 @@ volatile int transfer_cplt;
 uint8_t rx_last[2] = {0x00, 0x00};
 int message_len = 0;
 
+  uint8_t test_frame[1024];
+  ssize_t test_frame_size;
+
+  /* Parsed message */
+  message_t msg_parsed;
+  
+//  // put your main code here, to run repeatedly:
+//  /* Generate message - test message */
+  message_t msg;
 //SoftwareSerial mySerial(3, 2); // RX, TX
 
 void setup() {
@@ -30,19 +39,11 @@ void setup() {
 }
 
 void loop() {
-  uint8_t test_frame[1024];
-  ssize_t test_frame_size;
 
-  /* Parsed message */
-  message_t msg_parsed;
-  
-//  // put your main code here, to run repeatedly:
-//  /* Generate message - test message */
-//  message_t msg;
-//  message_init(&msg);
+  message_init(&msg);
 //  //Serial.print("msg sizeof: ");
 //  //Serial.println(sizeof(msg));
-//  //message_tlv_add_command(&msg, COMMAND_GET_STATUS);
+  message_tlv_add_command(&msg, COMMAND_GET_STATUS);
 //  //Serial.print("msg sizeof: ");
 //  //Serial.println(sizeof(msg));
 //  message_tlv_add_command(&msg, COMMAND_MOVE_MOTOR);
@@ -55,7 +56,7 @@ void loop() {
 //  //message_tlv_add_error_report(&msg, &error_report);
 //  //Serial.print("msg.length ");
 //  //Serial.println(msg.length);
-//  message_tlv_add_checksum(&msg);
+  message_tlv_add_checksum(&msg);
 //  //Serial.print("msg sizeof: ");
 //  //Serial.println(sizeof(msg));
 //  
@@ -73,7 +74,7 @@ void loop() {
 ////  }
 ////  Serial.println();
 //
-//  message_free(&msg);
+  message_free(&msg);
 
   //Serial.println("end");
   //delay(1000);

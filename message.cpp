@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "message.hpp"
+#include <Arduino.h> 
 //#include "crc32.hpp"
 /*Lib for CRC32 https://github.com/bakercp/CRC32 */
 #include "CRC32.h"
@@ -156,9 +157,9 @@ message_result_t message_tlv_add_current_reading(message_t *message, uint16_t cu
 message_result_t message_tlv_add_checksum(message_t *message)
 {
   uint32_t checksum = message_checksum(message);
-  Serial.print("checksum ");
-  Serial.println(checksum);
-  Serial.println(checksum, HEX);
+//  Serial.print("checksum ");
+//  Serial.println(checksum);
+//  Serial.println(checksum, HEX);
   return message_tlv_add(message, TLV_CHECKSUM, sizeof(uint32_t), (uint8_t*) &checksum);
 }
 
